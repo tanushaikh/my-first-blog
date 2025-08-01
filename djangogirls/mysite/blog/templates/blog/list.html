@@ -1,0 +1,16 @@
+{% include 'blog/base.html' %}
+{% load static %}
+<title>Blog list</title>
+<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% block content %}
+
+
+<h1>My blog list</h1>
+
+{% for blog in blogs %}
+<p>Author:{{ blog.author }}</p>
+<h1>Blog Titel:{{ blog.title }}</h1>
+
+{% endfor %}
+
+{% endblock %}
