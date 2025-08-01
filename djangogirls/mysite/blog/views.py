@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from .models import *
 from django.utils import timezone
+
+
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def blog_list_view(request):
@@ -8,13 +11,18 @@ def blog_list_view(request):
     return render(request,'blog/post_list.html', {'posts':posts})
 
 
+@login_required
 def blog_post_view(request):
     if request.method == "POST":
+        if request.user.is_authenticated:
+            author = request.user  
+        else:
+            author = None  
         title = request.POST.get('title')
         text = request.POST.get('text')
-        post = Post(title=title, text=text, published_date=timezone.now())
+        post = Post(title=title, text=text, published_date=timezone.now(), author=author)
         post.save()
-        return redirect('blog_list')
+        return redirect('list')
     return render(request, 'blog/post_form.html', {'action': 'Create'})
 
 # Edit post view
@@ -25,5 +33,5 @@ def post_edit_view(request, pk):
         post.text = request.POST.get('text')
         post.published_date = timezone.now()
         post.save()
-        return redirect('blog_list')
+        return redirect('list')
     return render(request, 'blog/post_form.html', {'post': post, 'action': 'Edit'})
